@@ -12,7 +12,7 @@ export default function Header(props) {
     const title = props.title
 
     const inputAnimation = {
-        opacity: animatedValue.interpolate({
+        opacity: animatedValue?.interpolate({
             inputRange: [0, 60],
             outputRange: [1, 0],
             extrapolate: 'clamp',
@@ -20,7 +20,7 @@ export default function Header(props) {
 
     };
     const outputAnimation = {
-        opacity: animatedValue.interpolate({
+        opacity: animatedValue?.interpolate({
             inputRange: [0, 10],
             outputRange: [0, 0.95],
             extrapolate: 'clamp',
@@ -33,20 +33,38 @@ export default function Header(props) {
     return (
         <>
             <AnimatedView style={[styles.header, inputAnimation]}>
-                <TouchableOpacity
-                    style={{ position: 'absolute', left: 20, top: 15 }}
-                    onPress={() => navigation.goBack()}>
-                    <AntDesign name='left' size={26} color={'#fff'} />
-                </TouchableOpacity>
-                <Text style={{ color: '#fff', fontSize: 18, fontWeight: '500' }}>{title}</Text>
+                {navigation &&
+                    <TouchableOpacity
+                        style={{ position: 'absolute', left: 20, top: 15 }}
+                        onPress={() => navigation.goBack()}>
+                        <AntDesign name='left' size={26} color={'#fff'} />
+                    </TouchableOpacity>
+                }
+                <View style={{ width: '80%', alignItems: 'center' }}>
+                    <Text
+                        style={{ color: '#fff', fontSize: 18, fontWeight: '500' }}
+                        numberOfLines={1}
+                        ellipsizeMode={'tail'}>
+                        {title}
+                    </Text>
+                </View>
             </AnimatedView>
             <AnimatedView style={[styles.headerScroll, outputAnimation]}>
-                <TouchableOpacity
-                    style={{ position: 'absolute', left: 20, top: 15 }}
-                    onPress={() => navigation.goBack()}>
-                    <AntDesign name='left' size={26} color={'#3C5A99'} />
-                </TouchableOpacity>
-                <Text style={{ color: '#3C5A99', fontSize: 18, fontWeight: '500' }}>{title}</Text>
+                {navigation &&
+                    <TouchableOpacity
+                        style={{ position: 'absolute', left: 20, top: 15 }}
+                        onPress={() => navigation.goBack()}>
+                        <AntDesign name='left' size={26} color={'#3C5A99'} />
+                    </TouchableOpacity>
+                }
+                <View style={{ width: '80%', alignItems: 'center' }}>
+                    <Text
+                        style={{ color: '#3C5A99', fontSize: 18, fontWeight: '500' }}
+                        numberOfLines={1}
+                        ellipsizeMode={'tail'}>
+                        {title}
+                    </Text>
+                </View>
             </AnimatedView>
         </>
     )

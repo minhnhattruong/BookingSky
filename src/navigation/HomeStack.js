@@ -1,22 +1,12 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BookingFlight from '../screens/bookings/flight/BookingFlight';
 import BookingHotel from '../screens/bookings/hotel/BookingHotel';
 import Home from '../screens/Home';
 import HotelList from '../screens/bookings/hotel/HotelList';
 import HotelInfo from '../screens/bookings/hotel/HotelInfo';
 import RoomInfo from '../screens/bookings/hotel/RoomInfo';
-import CustomerInfo from '../screens/bookings/hotel/CustomerInfo';
-import FindOneWayScreen from '../screens/bookings/flight/FindOneWay';
-import FindTicketDepartureScreen from '../screens/bookings/flight/FindTicketDeparture';
-import FindReturnTicketScreen from '../screens/bookings/flight/FindReturnTicket';
-import BookingTicketScreen from '../screens/bookings/flight/BookingTicket';
-import FormInformationScreen from '../screens/bookings/flight/FormInformation';
-import PaymentDetailsScreen from '../screens/bookings/flight/PaymentDetails';
-import PaymentHotel from '../screens/bookings/hotel/PaymentHotel';
-import PaymentSuccess from '../screens/bookings/hotel/PaymentSuccess';
-import CheckingInfoScreen from '../screens/bookings/flight/CheckingInfo';
+import BookingSuccess from '../screens/bookings/hotel/BookingSuccess';
 import ScreenMap from '../screens/maps/ScreenMap';
 import NotificationScreen from '../screens/Notification';
 import SettingScreen from '../screens/setting/Setting';
@@ -61,48 +51,6 @@ export default function HomeStack({ navigation, route }) {
         options={{ headerShown: false }}
       />
       <StackHome.Screen
-        name="BookingFlight"
-        component={BookingFlight}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="FindOneWay"
-        component={FindOneWayScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="FindTicketDeparture"
-        component={FindTicketDepartureScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="FindReturnTicket"
-        component={FindReturnTicketScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="BookingTicket"
-        component={BookingTicketScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="FormInformation"
-        component={FormInformationScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="PaymentDetails"
-        component={PaymentDetailsScreen}
-        options={{ headerShown: false }}
-      />
-
-      <StackHome.Screen
-        name="CheckingInfo"
-        component={CheckingInfoScreen}
-        options={{ headerShown: false }}
-      />
-
-      <StackHome.Screen
         name="BookingHotel"
         component={BookingHotel}
         options={{ headerShown: false }}
@@ -123,18 +71,8 @@ export default function HomeStack({ navigation, route }) {
         options={{ headerShown: false }}
       />
       <StackHome.Screen
-        name="CustomerInfo"
-        component={CustomerInfo}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="PaymentHotel"
-        component={PaymentHotel}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="PaymentSuccess"
-        component={PaymentSuccess}
+        name="BookingSuccess"
+        component={BookingSuccess}
         options={{ headerShown: false }}
       />
       <StackHome.Screen

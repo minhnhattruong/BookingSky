@@ -47,6 +47,7 @@ function MainTap() {
         },
         tabBarActiveTintColor: '#3C5A99',
         tabBarInactiveTintColor: 'gray',
+        unmountOnBlur: true
       })}>
       <Tab.Screen
         name="HomeStack"

@@ -13,6 +13,7 @@ let instance = axios.create({
 instance.interceptors.request.use(function (config) {
   const state = store.getState();
   const token = state?.auth?.token
+
   return { ...config, headers: { ...config.headers, Authorization: `Bearer ${token}` } };
 }, function (error) {
   return Promise.reject(error);

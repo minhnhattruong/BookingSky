@@ -1,26 +1,38 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, Fragment } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import Swiper from 'react-native-web-swiper';
+import Swiper from 'react-native-swiper'
 import Animated from 'react-native-reanimated';
 import Header from '../../../component/headers/Header';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@gorhom/bottom-sheet';
 import { defaultStyles } from '../../../style/style'
 import { getHotelbyId, getRoombyIdHotel } from '../../../api/apiHotel';
-
+import { addFavoriteHotel, deleteFavorite, getAllFavorite } from '../../../api/apiFavorite';
+import { useSelector, useDispatch } from 'react-redux'
+import { setState } from '../../../reducers/BookingSlice'
 
 export default function HotelInfo({ route, navigation }) {
+    const dispatch = useDispatch()
+    const userId = useSelector(store => store.auth.info.idUser)
     const { hotelId } = route.params
+    const [refresh, setRefresh] = useState(true)
+    const [likechecked, setLikeChecked] = useState(false)
     const [hotelInfo, setHotelInfo] = useState([])
-
-
-
     const animatedValue = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         getHotelInfo(hotelId)
-    }, [hotelId])
+        favoriteCheck()
+    }, [refresh])
+
+    const favoriteCheck = () => {
+        getAllFavorite(userId).then(rep => {
+            setLikeChecked(rep.data.some(e => e.idHotel === hotelId))
+        }).catch(e => {
+            console.log(e)
+        })
+    }
 
     const getHotelInfo = (id) => {
         getHotelbyId(id).then(rep => {
@@ -30,11 +42,27 @@ export default function HotelInfo({ route, navigation }) {
         })
     }
 
-
-
     const ratingStar = []
     for (let i = 0; i < hotelInfo.rating; i++) {
         ratingStar.push(i)
+    }
+
+    const onHandle = () => {
+        if (likechecked) {
+            deleteFavorite(userId, hotelId).then(rep => {
+                dispatch(setState())
+                setRefresh(!refresh)
+            }).catch(e => {
+                console.log(e)
+            })
+        } else {
+            addFavoriteHotel(userId, hotelId).then(rep => {
+                dispatch(setState())
+                setRefresh(!refresh)
+            }).catch(e => {
+                console.log(e)
+            })
+        }
     }
 
     return (
@@ -44,26 +72,29 @@ export default function HotelInfo({ route, navigation }) {
                 onScroll={e => {
                     animatedValue.setValue(e.nativeEvent.contentOffset.y)
                 }}
-                scrollEventThrottle={16}>
+                scrollEventThrottle={16}
+                style={{ paddingTop: 50 }}>
                 <View style={styles.header}>
-                    <View style={{ width: WINDOW_WIDTH, height: WINDOW_HEIGHT * 0.3 }}>
-                        <Swiper
-                            loop={true}
-                            controlsProps={{
-                                prevPos: false,
-                                nextPos: false
-                            }}
+                    <View style={{ width: WINDOW_WIDTH, height: WINDOW_HEIGHT * 0.25 }}>
+                        <TouchableOpacity
+                            style={[styles.likeBtn, likechecked === true ? { backgroundColor: '#ff6666' } : { borderWidth: 2, borderColor: '#fff' }]}
+                            onPress={() => onHandle()}
                         >
-                            {
-                                hotelInfo.photos?.map((e, i) => {
-                                    return (
-                                        <View key={i} style={styles.slideContainer}>
-                                            <Image source={{ uri: `http://localhost:8000/${e}` }} style={styles.hotelImage} />
-                                        </View>
-                                    )
-                                })
-                            }
-                        </Swiper>
+                            <AntDesign name='heart' size={20} color={'#fff'} />
+                        </TouchableOpacity>
+                        {hotelInfo.photos &&
+                            (<Swiper loop={true}>
+                                {
+                                    hotelInfo.photos.map((e, i) => {
+                                        return (
+                                            <View key={i} style={styles.slideContainer}>
+                                                <Image source={{ uri: `http://localhost:8000/${e}` }} style={styles.hotelImage} />
+                                            </View>
+                                        )
+                                    })
+                                }
+                            </Swiper>)
+                        }
                     </View>
                     <View style={styles.hotelInfo}>
                         <View>
@@ -124,12 +155,23 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
         borderBottomLeftRadius: 20
     },
+    likeBtn: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
+        position: 'absolute',
+        zIndex: 10,
+        top: 20,
+        right: 15
+    },
     slideContainer: {
         height: WINDOW_HEIGHT * 0.3,
         width: WINDOW_WIDTH,
         flex: 1,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
     },
     hotelName: {
         fontSize: 20,
@@ -138,7 +180,9 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     hotelImage: {
-        flex: 1,
+        width: '100%',
+        height: '100%'
+
     },
     hotelStar: {
         flexDirection: 'row',
@@ -160,9 +204,8 @@ const styles = StyleSheet.create({
     bookingBtn: {
         backgroundColor: '#3C5A99',
         marginHorizontal: 30,
-        height: 50,
+        paddingVertical: 15,
         alignItems: 'center',
-        justifyContent: 'center',
         borderRadius: 15
     },
 

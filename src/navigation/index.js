@@ -12,10 +12,10 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   const isSignedIn = useSelector(store => store.auth.token);
+  console.log(isSignedIn);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-
       <NavigationContainer>
         <BottomSheetModalProvider>
           <Stack.Navigator initialRouteName="MainTab">

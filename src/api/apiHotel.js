@@ -12,5 +12,9 @@ const getRoombyIdHotel = (id, startDate, endDate) => {
     return instance.get(`/api/v1/hotel/room/${id}?startDate=${startDate}&endDate=${endDate}`);
 };
 
+const getRCMHotel = () => {
+    return instance.get(`/api/v1/hotel/offer`);
+};
 
-export { getSearchHotels, getHotelbyId, getRoombyIdHotel }
+
+export { getSearchHotels, getHotelbyId, getRoombyIdHotel, getRCMHotel }

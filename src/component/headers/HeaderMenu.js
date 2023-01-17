@@ -3,10 +3,12 @@ import React, { useRef } from 'react'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Animated from 'react-native-reanimated';
 import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
+import { useSelector } from 'react-redux';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 export default function HeaderMenu(props) {
+    const username = useSelector(store => store.auth.info.name);
     const navigation = props.navigation
     const animatedValue = props.animatedValue
 
@@ -228,7 +230,7 @@ export default function HeaderMenu(props) {
                                 </AnimatedView>
                                 <AnimatedView style={[userNameAnimation]}>
                                     <Text style={{ color: '#fff', fontSize: 17, fontWeight: '500' }}>
-                                        Trương Minh Nhật !
+                                        {username} !
                                     </Text>
                                 </AnimatedView>
                             </View>

@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@gorhom/bottom-sheet'
 
 export default function Account({ navigation }) {
+    const username = useSelector(store => store.auth.info.name);
     const dispatch = useDispatch();
     const onLogout = async () => {
         dispatch(clearState());
@@ -26,19 +27,9 @@ export default function Account({ navigation }) {
                         <Text style={{
                             marginRight: 5,
                             fontSize: 16,
-                            ontWeight: '500',
+                            fontWeight: '500',
                             color: '#000'
-                        }}>Mr</Text>
-                        <Text style={{
-                            marginRight: 5,
-                            fontSize: 17,
-                            ontWeight: '500',
-                            color: '#000'
-                        }}>Truong Minh Nhat</Text>
-                    </View>
-                    <View style={styles.coins}>
-                        <Text style={{ color: '#fff', fontSize: 15, marginRight: 5 }}>10000</Text>
-                        <Entypo name='database' size={18} color="#fff" />
+                        }}>Mr. {username}</Text>
                     </View>
                 </View>
             </View>
@@ -64,40 +55,12 @@ export default function Account({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.items}
-                        onPress={() => navigation.navigate('Payment')}>
+                        onPress={() => navigation.navigate('ChangePass')}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <View style={styles.icons}>
-                                <AntDesign name='creditcard' size={18} color="#699BF7" />
+                                <AntDesign name='lock' size={20} color="#699BF7" />
                             </View>
-                            <Text style={styles.titles}>Phương thức thanh toán</Text>
-                        </View>
-                        <AntDesign name='right' size={18} color="#699BF7" />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.endow}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: '500',
-                        marginLeft: 15,
-                        marginVertical: 10,
-                        color: '#000'
-                    }}>Ưu đãi</Text>
-                    <TouchableOpacity
-                        style={styles.items}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={styles.icons}>
-                                <Entypo name='database' size={19} color="#699BF7" />
-                            </View>
-                            <Text style={styles.titles}>Xu tích lũy</Text>
-                        </View>
-                        <AntDesign name='right' size={18} color="#699BF7" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.items}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={styles.icons}>
-                                <MaterialCommunityIcons name='ticket-percent-outline' size={22} color="#699BF7" />
-                            </View>
-                            <Text style={styles.titles}>Voucher dành cho tôi</Text>
+                            <Text style={styles.titles}>Thay đổi mật khẩu</Text>
                         </View>
                         <AntDesign name='right' size={18} color="#699BF7" />
                     </TouchableOpacity>
@@ -146,15 +109,6 @@ const styles = StyleSheet.create({
     name: {
         flexDirection: 'row',
         marginBottom: 5,
-    },
-    coins: {
-        flexDirection: 'row',
-        backgroundColor: '#FFCC4D',
-        width: 100,
-        height: 24,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 15,
     },
     avatar: {
         width: WINDOW_WIDTH * 0.3,

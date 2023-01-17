@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Animated from 'react-native-reanimated'
+import { FormattedCurrency } from 'react-native-globalize';
 import Header from '../../../component/headers/Header';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@gorhom/bottom-sheet';
 import { defaultStyles } from '../../../style/style'
@@ -15,7 +16,6 @@ export default function HotelList({ route, navigation }) {
     const { city, min, max } = route.params
     const [data, setData] = useState([])
 
-    console.log(data);
     useEffect(() => {
         getSearch(city, min, max)
     }, [city, min, max])
@@ -27,6 +27,10 @@ export default function HotelList({ route, navigation }) {
             console.log(e)
         })
     }
+
+    console.log('data', data);
+
+
 
     return (
         <View style={defaultStyles.containers}>
@@ -47,6 +51,7 @@ export default function HotelList({ route, navigation }) {
                             }
                             return (
                                 <TouchableOpacity key={i} style={styles.item} onPress={() => {
+                                    console.log(e._id)
                                     navigation.navigate(
                                         'HotelInfo', { hotelId: e._id, }
                                     )
@@ -74,7 +79,7 @@ export default function HotelList({ route, navigation }) {
                                         }
                                         <View style={styles.hotelPrice}>
                                             <Text style={{ fontSize: 12, marginBottom: 0.5, marginRight: 3 }}>Từ </Text>
-                                            <Text style={{ color: '#000', fontSize: 16, fontWeight: '500' }}>{e.cheapestPrice}</Text>
+                                            <FormattedCurrency style={{ color: '#000', fontSize: 16, fontWeight: '500' }} value={Number(e.cheapestPrice)} />
                                             <Text> đ/đêm</Text>
                                         </View>
                                         <View style={styles.location}>

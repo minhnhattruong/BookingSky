@@ -1,141 +1,124 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React from 'react'
-import Entypo from 'react-native-vector-icons/Entypo';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
+import { FormattedCurrency } from 'react-native-globalize';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { getAllBooking, cancelBooking } from '../../api/apiBooking';
+import Header from '../../component/headers/Header';
+import PaymentModal from '../../component/booking/PaymentModal';
+
 
 const YourBooking = ({ navigation }) => {
-    const data = [1, 2, 3, 4]
+
+    const [data, setData] = useState([])
+    const [refreshing, setRefreshing] = useState(false);
+
+    const bottomSheetRef = useRef(null);
+    const handlePresentModalPress = useCallback(() => {
+        bottomSheetRef.current?.present();
+    }, []);
+
+    useEffect(() => {
+        getMyBooking()
+    }, [refreshing])
+
+    const getMyBooking = () => {
+        getAllBooking().then(rep => {
+            setData(rep.data)
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
+    const onCancel = (id) => {
+        cancelBooking(id).then(rep => {
+            setRefreshing(!refreshing)
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
+    console.log(data);
     return (
-        <View style={{ flex: 1, backgroundColor: '#EDF1F9' }}>
-            <View style={styles.header}>
-                <View style={{ flex: 1, alignItems: 'center' }}>
-                    <Text style={{ color: '#fff', fontSize: 18, fontWeight: '500' }}>Ưa thích</Text>
+        <View style={styles.container}>
+            <Header title="Đã đặt" />
+            <View style={{ height: 50 }} />
+            <ScrollView
+                style={{ paddingTop: 10, marginBottom: 60 }}
+            >
+                <View style={{ marginTop: 10, marginBottom: 10, paddingHorizontal: 15 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Phòng đã đặt</Text>
                 </View>
-            </View>
-            <View style={{ flex: 1 }}>
-                <ScrollView style={{ marginLeft: 10, marginRight: 10 }}>
-
-                    <View style={{ marginTop: 10, marginBottom: 10 }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Phòng đã đặt</Text>
-                    </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('TicketHotel')} style={{
-                        backgroundColor: '#fff', shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: 1,
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 1.00,
-                        elevation: 4,
-                        display: 'flex',
-                        flexDirection: 'row',
-
-                    }}>
-                        <View style={{ flexDirection: 'row', flex: 1 }}>
-                            <View >
-                                <Image source={{ uri: 'https://d2e5ushqwiltxm.cloudfront.net/wp-content/uploads/sites/95/2016/12/21145818/3546897_XL-3.jpg' }} style={{ width: 130, height: 130 }} />
-                            </View>
-
-                            <View style={{ flexDirection: 'row', flex: 1, marginLeft: 10, marginRight: 10, paddingVertical: 5 }}>
-                                <View style={{ flex: 1, }}>
-                                    <Text style={{ fontWeight: 'bold', color: '#000' }}>
-                                        GTC Hotel
-                                    </Text>
-                                    <Text>
-                                        DELUXE ROOM
-                                    </Text>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                                        <View style={{ flexDirection: 'column', height: '100%', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 5 }}>
-                                            <Entypo name='dot-single' size={18} color='#000' style={{ padding: 0, }} />
-                                            <View style={{ borderRightWidth: 1, borderRightColor: '#000', borderStyle: 'dashed', flex: 1, }}></View>
-                                            <Entypo name='dot-single' size={18} color='#000' />
-                                        </View>
-                                        <View style={{ flexDirection: 'column', height: '100%', justifyContent: 'space-between', paddingVertical: 5 }}>
-                                            <Text style={{ fontSize: 12 }}>11:30 T4, 10 - 8 - 2022</Text>
-                                            <Text style={{ fontSize: 12 }}>14:00 T2, 8 - 8 - 2022</Text>
+                {
+                    data.map((e, i) => (
+                        <View key={i} style={styles.items}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1, height: 120 }}>
+                                    <Image style={{ height: '100%', width: '100%' }} source={{ uri: 'https://img1.10bestmedia.com/Images/Photos/378649/Park-Hyatt-New-York-Manhattan-Sky-Suite-Master-Bedroom-low-res_54_990x660.jpg' }} />
+                                </View>
+                                <View style={{ flex: 2, padding: 10 }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                                        <FontAwesome name='hotel' size={18} color={'#3C5A99'} />
+                                        <Text
+                                            style={styles.roomName}
+                                            numberOfLines={2}
+                                            ellipsizeMode={'tail'}
+                                        >
+                                            {e.title}
+                                        </Text>
+                                        <View style={styles.room}>
+                                            <Text style={{
+                                                paddingHorizontal: 10,
+                                                paddingVertical: 3,
+                                                color: '#fff',
+                                                fontSize: 12
+                                            }}>P. {e.roomNum}</Text>
                                         </View>
                                     </View>
-                                    <Text>
-                                        4 người
-                                    </Text>
-                                </View>
-                                <View style={{ justifyContent: 'space-between', alignItems: 'flex-end', }}>
-                                    <Text style={{ color: '#000', fontWeight: 'bold' }}>
-                                        X2
-                                    </Text>
-                                    <Text style={{ color: '#53CF76' }}>
-                                        Đã đặt
-                                    </Text>
+
+                                    <View style={{ marginTop: 10 }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={{ fontSize: 12, width: 80 }}>Nhận phòng:</Text>
+                                            <Text style={{ fontSize: 12 }}>{e.reserveDates[0]}</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={{ fontSize: 12, width: 80 }}>Trả phòng:</Text>
+                                            <Text style={{ fontSize: 12 }}>{e.reserveDates[1]}</Text>
+                                        </View>
+                                    </View>
                                 </View>
                             </View>
-
-                        </View>
-                    </TouchableOpacity>
-                    <View style={{ marginTop: 10, marginBottom: 10 }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000' }}>Phòng đã hoàn thành</Text>
-                    </View>
-                    <View style={{ marginBottom: 10 }}>
-                        {data.map((e, i) => (
-                            <TouchableOpacity key={i} onPress={() => navigation.navigate('TicketHotel')} style={{
-                                backgroundColor: '#fff', shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 1,
-                                },
-                                shadowOpacity: 0.25,
-                                shadowRadius: 1.00,
-                                elevation: 4,
-                                display: 'flex',
+                            <View style={styles.dashedLine} />
+                            <View style={{
                                 flexDirection: 'row',
-                                marginTop: 10
-
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-end',
+                                paddingVertical: 15,
+                                paddingHorizontal: 15,
                             }}>
-                                <View style={{ flexDirection: 'row', flex: 1 }}>
-                                    <View >
-                                        <Image source={{ uri: 'https://d2e5ushqwiltxm.cloudfront.net/wp-content/uploads/sites/95/2016/12/21145818/3546897_XL-3.jpg' }} style={{ width: 130, height: 130 }} />
-                                    </View>
-
-                                    <View style={{ flexDirection: 'row', flex: 1, marginLeft: 10, marginRight: 10, paddingVertical: 5 }}>
-                                        <View style={{ flex: 1, }}>
-                                            <Text style={{ fontWeight: 'bold', color: '#000' }}>
-                                                GTC Hotel
-                                            </Text>
-                                            <Text>
-                                                DELUXE ROOM
-                                            </Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, }}>
-                                                <View style={{ flexDirection: 'column', height: '100%', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 5 }}>
-                                                    <Entypo name='dot-single' size={18} color='#000' style={{ padding: 0, }} />
-                                                    <View style={{ borderRightWidth: 1, borderRightColor: '#000', borderStyle: 'dashed', flex: 1, }}></View>
-                                                    <Entypo name='dot-single' size={18} color='#000' />
-                                                </View>
-                                                <View style={{ flexDirection: 'column', height: '100%', justifyContent: 'space-between', paddingVertical: 5 }}>
-                                                    <Text style={{ fontSize: 12 }}>11:30 T4, 10 - 8 - 2022</Text>
-                                                    <Text style={{ fontSize: 12 }}>14:00 T2, 8 - 8 - 2022</Text>
-                                                </View>
-                                            </View>
-                                            <Text>
-                                                4 người
-                                            </Text>
-                                        </View>
-                                        <View style={{ justifyContent: 'space-between', alignItems: 'flex-end', }}>
-                                            <Text style={{ color: '#000', fontWeight: 'bold' }}>
-                                                X2
-                                            </Text>
-                                            <Text style={{ color: '#FF6B00' }}>
-                                                Đã hoàn thành
-                                            </Text>
-                                        </View>
-                                    </View>
-
+                                <View>
+                                    <Text>Giá</Text>
+                                    <FormattedCurrency style={styles.price} value={Number(e.price)} />
                                 </View>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-
-
-                </ScrollView>
-
-            </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <TouchableOpacity
+                                        style={styles.cancelButton}
+                                        onPress={() => onCancel(e._id)}
+                                    >
+                                        <Text style={{ fontWeight: '500', color: '#fff', fontSize: 12 }}>Hủy phòng</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.payButton}
+                                        onPress={() => handlePresentModalPress()}
+                                    >
+                                        <Text style={{ fontWeight: '500', color: '#fff', fontSize: 12 }}>Thanh toán</Text>
+                                    </TouchableOpacity>
+                                    <PaymentModal bottomSheetRef={bottomSheetRef} />
+                                </View>
+                            </View>
+                        </View>
+                    ))
+                }
+            </ScrollView>
         </View>
     )
 }
@@ -143,12 +126,14 @@ const YourBooking = ({ navigation }) => {
 export default YourBooking
 
 const styles = StyleSheet.create({
-    header: {
-        paddingTop: 20,
-        backgroundColor: '#3C5A99',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 60,
+    container: {
+        backgroundColor: '#EDF1F9',
+        flex: 1
+    },
+    items: {
+        marginVertical: 10,
+        marginHorizontal: 15,
+        backgroundColor: '#fff',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -158,10 +143,49 @@ const styles = StyleSheet.create({
         shadowRadius: 1.00,
         elevation: 4,
     },
-    tabBar: {
-        backgroundColor: '#fff',
-        color: '#3C5A99',
-        padding: 5,
+    room: {
+        backgroundColor: '#f29c00',
+        borderRadius: 5,
+        marginLeft: 5
     },
+    roomName: {
+        fontWeight: 'bold',
+        color: '#000',
+        textTransform: 'uppercase',
+        marginLeft: 5
+    },
+    cancelButton: {
+        width: 80,
+        backgroundColor: '#ff0000',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderRadius: 5
+    },
+    payButton: {
+        marginLeft: 10,
+        width: 80,
+        backgroundColor: '#319c57',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderRadius: 5
+    },
+    dot: {
+        width: 5,
+        height: 5,
+        backgroundColor: '#666',
+        borderRadius: 5
+    },
+    dashedLine: {
+        height: 1,
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#dadada',
+        borderStyle: 'dashed'
+    },
+    price: {
+        fontSize: 20,
+        color: '#000',
+        fontWeight: '500'
+    }
 
 })

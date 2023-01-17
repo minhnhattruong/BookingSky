@@ -34,6 +34,7 @@ export default function FavouriteStack({ navigation, route }) {
                 name="Favourite"
                 component={Favourite}
                 options={{ headerShown: false }}
+
             />
         </StackFacourite.Navigator>
     );

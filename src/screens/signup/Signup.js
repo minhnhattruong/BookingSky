@@ -5,147 +5,138 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     TextInput,
-    Image,
     Text,
     TouchableOpacity,
-    SafeAreaView,
-    FlatList,
-    Button,
-    Pressable,
+    ScrollView,
 } from 'react-native';
-import React, { useState } from 'react';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import React, { useState, useEffect } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
+import { register } from '../../api/apiLogin';
 
 
 export default function Register({ navigation }) {
-    const [Ho, setHo] = React.useState("");
-    const [TenDem, setTenDem] = React.useState("");
-    const [Date, setDate] = React.useState("");
-    const [Email, setEmail] = React.useState("");
-    const [Phone, setPhone] = React.useState("");
-    const [Mk, setMk] = React.useState("");
+    const [fullName, setFullName] = useState(new String)
+    const [email, setEmail] = useState(new String)
+    const [phone, setPhone] = useState(new String)
+    const [identifyCard, setIdentifyCard] = useState(new String)
+    const [nation, setNation] = useState(new String)
+    const [password, setPassword] = useState(new String)
+    const [password2, setPassword2] = useState(new String)
+    const [btnDisable, setBtnDisable] = useState()
+    const [err, setErr] = useState()
+
+    useEffect(() => {
+        if (fullName.length > 0
+            && email.length > 0
+            && phone.length > 0
+            && password2.length > 0
+            && password == password2) {
+            setBtnDisable(false)
+        } else {
+            setBtnDisable(true)
+        }
+    }, [fullName, email, phone, password2, password])
+
+
+    const onRegister = () => {
+        register({
+            name: fullName,
+            email: email,
+            password: password,
+            phone: phone,
+            identifyCard: identifyCard,
+            nation: nation
+        }).then(rep => {
+            setErr(false)
+            navigation.navigate('SignupSuccess', {
+                name: fullName
+            })
+        }).catch(e => {
+            console.log(e.status);
+            setErr(true)
+        })
+    }
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Login')}
-                    style={styles.backButton}>
-                    <Ionicons name='arrow-back-outline' size={40} color={'white'} />
-                </TouchableOpacity>
-                <View style={styles.Title}>
-                    <Text style={{ fontSize: 19, color: 'white', textAlign: 'center' }}>
-                        Đăng ký thành viên
-                    </Text>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Login')}
+                        style={styles.backButton}>
+                        <Ionicons name='arrow-back-outline' size={30} color={'white'} />
+                    </TouchableOpacity>
+                    <Text style={{ color: '#fff', fontWeight: '500', fontSize: 18 }}>Đăng ký tài khoản</Text>
                 </View>
-
-                <View style={styles.maincontent}>
-                    <View style={styles.box1}>
-                        <Text style={{ fontSize: 15, color: '#000000', fontWeight: '500' }}>
-                            Họ và Tên *
-                        </Text>
-                    </View>
-                    <View style={styles.box2}>
+                <View style={{ height: 60 }} />
+                <ScrollView
+                    contentContainerStyle={{ justifyContent: 'center', height: '100%' }}
+                    style={{ width: '100%', paddingHorizontal: 30, }}
+                >
+                    <View style={styles.mainContent}>
+                        <Text style={styles.inputTitle}>Họ và tên <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
                         <TextInput
                             style={styles.input}
-                            onChangeText={setHo}
-                            value={Ho}
-                            placeholder="Họ"
+                            onChangeText={setFullName}
+                            placeholder="Họ và tên"
                         />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setTenDem}
-                            value={TenDem}
-                            placeholder="Tên và đệm"
-                        />
-                    </View>
-                    <View style={styles.box3}>
-                        <Text style={{ fontSize: 15, color: '#000000', fontWeight: '500' }}>
-                            Ngày sinh *
-                        </Text>
-                    </View>
-                    <View style={styles.box4}>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setDate}
-                            value={Date}
-                            placeholder="DD/MM/YYYY"
-                        />
-                    </View>
-                    <View style={styles.box5}>
-                        <Text style={{ fontSize: 15, color: '#000000', fontWeight: '500' }}>
-                            Email
-                        </Text>
-                    </View>
-                    <View style={styles.box6}>
+                        <Text style={styles.inputTitle}>Email <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={setEmail}
-                            value={Email}
-                            placeholder="vveco@gmail.com"
+                            placeholder="Email"
                         />
-                    </View>
-                    <View style={styles.box7}>
-                        <Text style={{ fontSize: 15, color: '#000000', fontWeight: '500' }}>
-                            Điện Thoại*
-                        </Text>
-                    </View>
-                    <View style={styles.box8}>
+                        <Text style={styles.inputTitle}>Điện thoại <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={setPhone}
-                            value={Phone}
-                            placeholder="(+84)"
+                            placeholder="Số điện thoại"
                         />
-                    </View>
-                    <View style={styles.box9}>
-                        <Text style={{ fontSize: 16, color: '#000000', fontWeight: '500' }}>
-                            Mật khẩu
-                        </Text>
-                    </View>
-                    <View style={styles.box10}>
+                        <Text style={styles.inputTitle}>CMND</Text>
                         <TextInput
                             style={styles.input}
-                            onChangeText={setMk}
-                            value={Mk}
-                            placeholder="Nhập từ 6 kí tự trở lên"
+                            onChangeText={setIdentifyCard}
+                            placeholder="CMND/ Căn cước công dân"
                         />
-
-                    </View>
-                    <TouchableOpacity>
-                        <Ionicons style={styles.Logoeyes} name='eye-off-outline' size={20} color={'#878787'} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.logins} onPress={() => navigation.navigate('Verification')}>
-                        <Text style={{ fontSize: 15, color: 'white' }}>
-                            Đăng ký</Text>
-                    </TouchableOpacity>
-
-                    <View style={styles.option}>
-                        <View style={{ width: 50, height: 1, backgroundColor: '#D9D9D9', marginRight: 10 }}></View>
-                        <Text style={{ fontSize: 12, color: '#878787' }}>
-                            Hoặc đăng ký với</Text>
-                        <View style={{ width: 50, height: 1, backgroundColor: '#D9D9D9', marginLeft: 10 }}></View>
-                    </View>
-
-                    <View style={styles.Logo}>
-                        <TouchableOpacity>
-                            <Image style={{ width: '20%', paddingVertical: 22, paddingHorizontal: 22, height: 30, marginTop: 3 }}
-                                source={require('../../assets/image/gg2.png')}>
-                            </Image>
+                        <Text style={styles.inputTitle}>Quốc tịch</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={setNation}
+                            placeholder="Quốc tịch"
+                        />
+                        <Text style={styles.inputTitle}>Nhập lại mật khẩu <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={setPassword}
+                            placeholder="Mật khẩu"
+                            secureTextEntry={true}
+                        />
+                        <Text style={styles.inputTitle}>Nhập lại mật khẩu <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={setPassword2}
+                            placeholder="Mật khẩu"
+                            secureTextEntry={true}
+                        />
+                        {btnDisable &&
+                            <Text style={styles.alert}>Vui lòng điền đủ các trường thông tin bắt buôc <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
+                        }
+                        <TouchableOpacity
+                            style={[styles.loginBtn, btnDisable ? { opacity: 0.5 } : { marginTop: 30 }]}
+                            disabled={btnDisable ? true : false}
+                            onPress={onRegister}
+                        >
+                            <Text style={{ color: '#fff', fontWeight: '500' }}>Đăng ký</Text>
                         </TouchableOpacity>
-                        <FontAwesome name='circle' size={15} color={'#D9D9D9'} />
-                        <TouchableOpacity>
-                            <FontAwesome name='facebook-square' size={50} color={'#3C5A99'} />
-                        </TouchableOpacity>
+
                     </View>
-                </View>
+                </ScrollView>
             </View>
         </TouchableWithoutFeedback>
 
     )
 }
-const CONTENT_WIDTH = WINDOW_WIDTH * 0.9
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -153,92 +144,66 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    Title: {
-        top: 25,
+    header: {
         position: 'absolute',
+        top: 0,
+        zIndex: 1000,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 60,
+        backgroundColor: '#3C5A99',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 1.00,
+
+        elevation: 3,
     },
     backButton: {
         position: 'absolute',
-        top: 20,
+        zIndex: 1000,
         left: 20,
-    },
-    maincontent: {
-        width: CONTENT_WIDTH,
-        backgroundColor: '#fff',
-        paddingVertical: 60,
-        alignItems: 'center',
+        width: 50,
+        height: 50,
         justifyContent: 'center',
+        alignItems: 'center'
+    },
+    mainContent: {
+        width: '100%',
+        backgroundColor: '#fff',
+        paddingVertical: 35,
+        paddingHorizontal: 20,
         borderRadius: 40,
-
-
     },
-    box1: {
-        marginRight: 220,
-    },
-    box2: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: 200,
-        marginRight: 100,
-
-
-    },
-    box3: {
-        marginRight: 220,
-    },
-    box4: {
-        marginRight: 200,
-
-    },
-    box5: {
-        marginRight: 250,
-    },
-    box6: {
-        marginRight: 170,
-
-    },
-    box7: {
-        marginRight: 210,
-
-    },
-    box8: {
-        marginRight: 250,
-
-        color: '#fff'
-    },
-    box9: {
-        marginRight: 220,
-    },
-    box10: {
-        marginRight: 150,
-        flexDirection: 'row',
-
-    },
-    logins: {
-        paddingVertical: 15,
-        paddingHorizontal: 100,
-        backgroundColor: "#F70202",
-
-        borderRadius: 20,
-    },
-
-    option: {
+    input: {
         height: 40,
-        margin: 12,
+        borderWidth: 0.5,
+        borderColor: '#dadada',
+        borderRadius: 10,
         padding: 10,
         alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'center',
-
     },
-    Logo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    inputTitle: {
+        marginTop: 10,
+        marginBottom: 5,
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    alert: {
+        fontSize: 12,
+        fontStyle: 'italic',
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    loginBtn: {
+        height: 40,
+        borderRadius: 10,
+        padding: 10,
+        backgroundColor: '#ff0000',
         alignItems: 'center',
-        width: 200,
-    },
-    Logoeyes: {
-        marginTop: -35,
-        marginLeft: 250,
-    },
+    }
 })

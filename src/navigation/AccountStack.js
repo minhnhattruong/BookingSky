@@ -2,10 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Account from '../screens/account/Account';
 import UserInfo from '../screens/account/UserInfo';
-import Payment from '../screens/account/Payment';
-import AddPayment from '../screens/account/AddPayment';
-import PaymentInfo from '../screens/account/PaymentInfo';
-import AvatarPick from '../screens/account/AvatarPick';
+import ChangePass from '../screens/account/ChangePass';
 const StackAccount = createNativeStackNavigator();
 import {
     getFocusedRouteNameFromRoute,
@@ -45,23 +42,8 @@ export default function AccountStack({ navigation, route }) {
                 options={{ headerShown: false }}
             />
             <StackAccount.Screen
-                name="Payment"
-                component={Payment}
-                options={{ headerShown: false }}
-            />
-            <StackAccount.Screen
-                name="PaymentInfo"
-                component={PaymentInfo}
-                options={{ headerShown: false }}
-            />
-            <StackAccount.Screen
-                name="AddPayment"
-                component={AddPayment}
-                options={{ headerShown: false }}
-            />
-            <StackAccount.Screen
-                name="AvatarPick"
-                component={AvatarPick}
+                name="ChangePass"
+                component={ChangePass}
                 options={{ headerShown: false }}
             />
 

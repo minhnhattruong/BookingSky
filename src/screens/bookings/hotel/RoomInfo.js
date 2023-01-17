@@ -6,29 +6,34 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import { getRoombyIdHotel } from '../../../api/apiHotel';
+import { bookingRoom } from '../../../api/apiBooking';
 import Header from '../../../component/headers/Header';
+import { FormattedCurrency } from 'react-native-globalize';
 
 
-const WIDTH = Dimensions.get('window').width
-const HEIGHT = Dimensions.get('window').height
 
 export default function RoomInfo({ route, navigation }) {
-    const animatedValue = useRef(new Animated.Value(0)).current;
     const { hotelId, hotelInfo } = route.params
-
     const [checkin, setCheckin] = useState(new Date())
     const [checkout, setCheckout] = useState(new Date())
     const [openCheckIn, setOpenCheckIn] = useState(false)
     const [openCheckOut, setOpenCheckOut] = useState(false)
     const [room, setRoom] = useState([])
-    const [choosen, setChoosen] = useState(false)
-    const [openShowRoom, setOpenShowRoom] = useState(false)
+    const [choosen, setChoosen] = useState([])
+    const [openShowRoom, setOpenShowRoom] = useState([])
     const sDate = moment(checkin).format('YYYY-MM-DD')
     const eDate = moment(checkout).format('YYYY-MM-DD')
+    const [dataBooking, setDataBooking] = useState([])
+
+    let difference = checkout.getTime() - checkin.getTime()
+    let totalDays = Math.ceil(difference / (1000 * 3600 * 24));
+
 
     useEffect(() => {
         hotelInfo.rooms != [] && getRoom(hotelId, sDate, eDate)
-    }, [sDate, eDate])
+    }, [hotelId, sDate, eDate])
+
+    console.log(hotelId);
 
     const getRoom = (id, startDate, endDate) => {
         getRoombyIdHotel(id, startDate, endDate).then(rep => {
@@ -37,32 +42,57 @@ export default function RoomInfo({ route, navigation }) {
             console.log(e)
         })
     }
-    const onChooseRoom = (id) => {
-        if (choosen == id) {
-            setChoosen(false)
+
+    const onChooseRoom = (id, num) => {
+        if (choosen.some(item => item.id === id) === false) {
+            setChoosen([...choosen, {
+                id: id,
+                number: num,
+            }])
         } else {
-            setChoosen(id)
+            setChoosen(choosen.filter(item => item.id !== id))
         }
 
     }
 
     const onShowRoomList = (id) => {
-        if (openShowRoom == id) {
-            setOpenShowRoom(false)
+        if (openShowRoom.includes(id) == false) {
+            setOpenShowRoom([...openShowRoom, id])
         } else {
-            setOpenShowRoom(id)
+            setOpenShowRoom(openShowRoom.filter(item => item !== id))
         }
     }
 
+    const onBooking = () => {
+        choosen.map((e, i) => {
+            bookingHotel(e.id, {
+                hotelId: hotelInfo._id,
+                title: hotelInfo.title,
+                roomNum: e.number,
+                // photos: e.photos[0],
+                address: hotelInfo.address,
+                dates: [sDate, eDate],
+                totalPrice: totalDays * hotelInfo.cheapestPrice
+            })
+        })
+        navigation.navigate('BookingSuccess')
+    }
+
+    const bookingHotel = (id, body) => {
+        bookingRoom(id, body).then(rep => {
+            setDataBooking([...dataBooking, rep.data])
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
+    console.log(choosen);
 
     return (
         <View style={styles.container}>
-            <Header navigation={navigation} animatedValue={animatedValue} title={'Đặt phòng'} />
-            <ScrollView style={styles.hotelRoom}
-                onScroll={e => {
-                    animatedValue.setValue(e.nativeEvent.contentOffset.y)
-                }}
-                scrollEventThrottle={16}>
+            <Header navigation={navigation} title={`Đặt phòng - ${hotelInfo.title}`} />
+            <View style={{ height: 60 }} />
+            <View style={styles.hotelRoom}>
                 <Text style={{ marginLeft: 20, fontSize: 18, fontWeight: '500', color: '#000' }}>Loại Phòng</Text>
                 <View style={styles.datePicker}>
                     <View style={{ width: '40%' }}>
@@ -120,69 +150,83 @@ export default function RoomInfo({ route, navigation }) {
                     </View>
                 </View>
 
-                <View style={styles.listRoom}>
+                <ScrollView contentContainerStyle={styles.listRoom}>
                     {
                         room.map((e, i) => {
                             const roomList = e.roomNumbers
                             return (
                                 <View key={i} style={styles.roomItem}>
-                                    <View style={{ marginLeft: 15, justifyContent: 'center' }}>
-                                        <Text style={styles.roomTitle} numberOfLines={2} ellipsizeMode={'tail'}>
-                                            {e.title}
-                                        </Text>
-                                        <View style={{ height: 60, justifyContent: 'center' }}>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Ionicons name='bed-outline' size={14} color={'#616161'} />
-                                                <Text style={{ fontSize: 12, marginLeft: 5 }}>{e.beds} Giường</Text>
-                                            </View>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Ionicons name='people' size={14} color={'#616161'} />
-                                                <Text style={{ fontSize: 12, marginLeft: 5 }}>Tối đa {e.maxPeople} người</Text>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flex: 1, height: 120 }}>
+                                            <Image style={{ height: '100%', width: '100%' }} source={e.photos.length > 0 ? { uri: `http://localhost:8000/${e.photos[0]}` }
+                                                :
+                                                { uri: 'https://img1.10bestmedia.com/Images/Photos/378649/Park-Hyatt-New-York-Manhattan-Sky-Suite-Master-Bedroom-low-res_54_990x660.jpg' }} />
+                                        </View>
+                                        <View style={{ flex: 2, padding: 10 }}>
+                                            <Text style={styles.roomTitle} numberOfLines={2} ellipsizeMode={'tail'}>
+                                                {e.title}
+                                            </Text>
+                                            <View style={{ height: 60, justifyContent: 'center' }}>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Ionicons name='bed-outline' size={14} color={'#616161'} />
+                                                    <Text style={{ fontSize: 12, marginLeft: 5 }}>{e.beds} Giường</Text>
+                                                </View>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Ionicons name='people' size={14} color={'#616161'} />
+                                                    <Text style={{ fontSize: 12, marginLeft: 5 }}>Tối đa {e.maxPeople} người</Text>
+                                                </View>
                                             </View>
                                         </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-
-                                            <TouchableOpacity
-                                                style={styles.showRoomBtn}
-                                                onPress={() => onShowRoomList(e._id)}>
-                                                <Text style={{ fontWeight: '500', color: '#699BF7', marginRight: 5 }}>Xem phòng trống</Text>
-                                                <AntDesign name={openShowRoom == e._id ? 'up' : 'down'} size={12} color={'#699BF7'} />
-                                            </TouchableOpacity>
-
-                                            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                                <Text style={{ fontSize: 18, fontWeight: '500', color: '#000' }}>{e.price}</Text>
-                                                <Text style={{ marginRight: 2, marginBottom: 8, color: '#000' }}>đ</Text>
-                                                <Text style={{ fontSize: 15, marginBottom: 1, color: '#000' }}>/đêm</Text>
-                                            </View>
-                                        </View>
-                                        {openShowRoom == e._id &&
-                                            <View style={styles.roomNumbers}>
-                                                {roomList.map((e, i) => (
-                                                    <TouchableOpacity key={i}
-                                                        style={[styles.roomNumbersItem,
-                                                        choosen == e._id ? { backgroundColor: 'red' } :
-                                                            { borderWidth: 1, borderColor: '#dadada' }
-                                                        ]}
-                                                        onPress={() => onChooseRoom(e._id)}
-                                                    >
-                                                        <Text style={
-                                                            choosen == e._id ? { color: '#fff' }
-                                                                : { color: '#888' }}>
-                                                            {e.number}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </View>
-                                        }
                                     </View>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10 }}>
+                                        <TouchableOpacity
+                                            style={styles.showRoomBtn}
+                                            onPress={() => onShowRoomList(e._id)}>
+                                            <Text style={{ fontWeight: '500', color: '#699BF7', marginRight: 5 }}>Xem phòng trống</Text>
+                                            <AntDesign name={openShowRoom == e._id ? 'up' : 'down'} size={12} color={'#699BF7'} />
+                                        </TouchableOpacity>
+
+                                        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                            <FormattedCurrency style={{ fontSize: 18, fontWeight: '500', color: '#000' }} value={Number(e.price)} />
+                                            <Text style={{ fontSize: 15, marginBottom: 1, color: '#000' }}>/đêm</Text>
+                                        </View>
+                                    </View>
+                                    {openShowRoom.includes(e._id) &&
+                                        <View style={styles.roomNumbers}>
+                                            {roomList.map((e, i) => (
+                                                <TouchableOpacity key={i}
+                                                    style={[styles.roomNumbersItem,
+                                                    choosen.some(item => item.id === e._id) == true ? { backgroundColor: 'red' } :
+                                                        { borderWidth: 1, borderColor: '#dadada' }
+                                                    ]}
+                                                    onPress={() => onChooseRoom(e._id, e.number)}
+                                                >
+                                                    <Text style={
+                                                        choosen.some(item => item.id === e._id) == true ? { color: '#fff' }
+                                                            : { color: '#888' }}>
+                                                        {e.number}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </View>
+                                    }
                                 </View>
                             )
                         })
                     }
-                </View>
+                </ScrollView>
 
-            </ScrollView>
-        </View>
+            </View >
+            <View style={{ width: '100%', position: 'absolute', bottom: 30 }}>
+                <TouchableOpacity
+                    style={[styles.bookingBtn, choosen.length > 0 && { opacity: 1 }]}
+                    disabled={choosen.length > 0 ? false : true}
+                    onPress={onBooking}
+                >
+                    <Text style={{ fontWeight: '500', color: '#fff', fontSize: 16 }}>Đặt phòng ngay</Text>
+                </TouchableOpacity>
+            </View>
+        </View >
     )
 }
 
@@ -192,18 +236,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#EDF1F9'
     },
     hotelRoom: {
-        marginTop: 80,
+        flex: 1,
         paddingTop: 20,
         backgroundColor: '#fff',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: -1,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 1.00,
-        elevation: 1
-
     },
     datePicker: {
         flexDirection: 'row',
@@ -225,7 +260,8 @@ const styles = StyleSheet.create({
     },
     listRoom: {
         alignItems: 'center',
-        paddingHorizontal: 25
+        paddingHorizontal: 25,
+        paddingBottom: 100
     },
     roomItem: {
         paddingVertical: 15,
@@ -257,5 +293,26 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10
+    },
+    bookingBtn: {
+        backgroundColor: '#ff0000',
+        marginHorizontal: 30,
+        paddingVertical: 15,
+        borderRadius: 15,
+        alignItems: 'center',
+        opacity: 0.6,
+    },
+    footer: {
+        backgroundColor: '#fff',
+        height: 120,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: -1,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 1.00,
+
+        elevation: 1,
     }
 })

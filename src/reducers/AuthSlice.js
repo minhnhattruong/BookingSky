@@ -4,13 +4,13 @@ import { login } from '../api/apiLogin';
 const initialState = {
   token: null,
   tokenFCM: null,
+  userId: null,
   info: {},
   loading: false,
   role: [],
 };
 
 export const signInApi = createAsyncThunk(
-
   'Auth/login',
   async (params, thunkAPI) => {
     try {
@@ -30,15 +30,12 @@ export const authSlice = createSlice({
       state.token = null
       state.info = {}
       state.role = []
-      state.tokenFCM = null
     },
     addState: (state, action) => {
-      state.token = 'gggg';
-    },
-    saveFCM: (state, action) => {
-      state.tokenFCM = action.payload;
+      state.token = action.payload.access_token;
     },
   },
+
   // handle response data from api
   extraReducers: builder => {
     builder.addCase(signInApi.pending, (state, action) => {
@@ -46,11 +43,14 @@ export const authSlice = createSlice({
     })
     builder.addCase(signInApi.fulfilled, (state, action) => {
       state.loading = false;
-      state.token = action.payload.data.accessToken;
+      state.token = action.payload.data.access_token;
       state.info = {
-        name: action.payload.data.user.username,
+        name: action.payload.data.user.name,
+        email: action.payload.data.user.email,
         phone: action.payload.data.user.phone,
-        idUser: action.payload.data.user.id,
+        nation: action.payload.data.user.nation,
+        identifyCard: action.payload.data.user.identifyCard,
+        idUser: action.payload.data.user._id,
       };
     })
     builder.addCase(signInApi.rejected, (state, action) => {
@@ -61,6 +61,6 @@ export const authSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { clearState, addState, saveFCM } = authSlice.actions;
+export const { clearState, addState } = authSlice.actions;
 
 export default authSlice.reducer;

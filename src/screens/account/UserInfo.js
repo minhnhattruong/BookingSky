@@ -2,75 +2,26 @@ import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, TextInput,
 import React, { useState, useCallback, useMemo, useRef } from 'react'
 import Header from '../../component/headers/Header'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import Entypo from 'react-native-vector-icons/Entypo'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import DatePicker from 'react-native-date-picker'
-import { BottomSheetModal, BottomSheetScrollView, WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
-import CustomBackdrop from '../../component/CustomBackdrop '
+import { useSelector } from 'react-redux';
+import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
 
 const HEIGHT = Dimensions.get('window').height
 
 export default function UserInfo({ navigation }) {
+    const userName = useSelector(store => store.auth.info.name);
+    const userEmail = useSelector(store => store.auth.info.email);
+    const userPhone = useSelector(store => store.auth.info.phone);
+    const userNation = useSelector(store => store.auth.info.nation);
+    const userIdentifyCard = useSelector(store => store.auth.info.identifyCard);
 
-    const [name, setName] = useState('Truong Minh Nhat')
-    const [nation, setNation] = useState('Việt Nam')
-    const [identifyCard, setIdentifyCard] = useState('013668428')
-    const [openBirth, setOpenBirth] = useState(false)
-    const [birth, setBirth] = useState(new Date())
-    const [phone, setPhone] = useState('0768183914')
-    const [email, setEmail] = useState('minhnhat03042000@gmail.com')
-    const [img, setImg] = useState()
-
-    const bottomSheetRef = useRef(null);
-
-    const snapPoints = useMemo(() => ['3%', '30%'], []);
-
-    const handleSheetChanges = useCallback(index => {
-        console.log('handleSheetChanges', index);
-    }, []);
-    const handlePresentModalPress = useCallback(() => {
-        bottomSheetRef.current?.present();
-    }, []);
-    const handlePresentModalClose = useCallback(() => {
-        bottomSheetRef.current?.close();
-    }, []);
-
-    const renderBackdrop = useCallback(
-        props => (
-            <CustomBackdrop
-                {...props}
-                disappearsOnIndex={1}
-                appearsOnIndex={2}
-                bottomSheetRef={bottomSheetRef}
-            />
-        ),
-        [],
-    );
-
+    const [nation, setNation] = useState(userNation)
+    const [identifyCard, setIdentifyCard] = useState(userIdentifyCard)
+    const [phone, setPhone] = useState(userPhone)
 
     return (
         <View style={styles.container}>
             <Header title='Hồ sơ của tôi' navigation={navigation} />
-            <View style={styles.header}>
-                <View style={styles.avatar}>
-
-                    {
-                        img ? (
-                            <Image style={{ flex: 1, borderRadius: 110, }} source={{ uri: img }} />
-                        ) : (
-                            <Image style={{ flex: 1, borderRadius: 110, }} source={{ uri: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png' }} />
-                        )
-                    }
-
-                    <TouchableOpacity
-                        style={styles.btnCamera}
-                        onPress={() => handlePresentModalPress()}>
-                        <View style={{ borderRadius: 50, borderColor: '#699BF7', borderWidth: 1, padding: 5 }}>
-                            <AntDesign name='camerao' size={18} color='#699BF7' />
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <View style={{ height: 60 }} />
             <ScrollView>
                 <View style={styles.userInfo}>
                     <Text style={{
@@ -83,35 +34,8 @@ export default function UserInfo({ navigation }) {
                     <View style={styles.items}>
                         <Text style={styles.placeHolders}>Họ và tên</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={setName}
-                                value={name}
-                            />
-                            <MaterialCommunityIcons name='pencil-box-outline' size={16} color="#699BF7" />
+                            <Text style={styles.input}>{userName}</Text>
                         </View>
-                    </View>
-                    <View style={styles.items}>
-                        <Text style={styles.placeHolders}>Ngày sinh</Text>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'row', alignItems: 'center' }}
-                            onPress={() => setOpenBirth(true)}>
-                            <Text style={{ marginRight: 10, color: '#000' }}>{`${birth.toLocaleDateString()}`}</Text>
-                            <MaterialCommunityIcons name='pencil-box-outline' size={16} color="#699BF7" />
-                        </TouchableOpacity>
-                        <DatePicker modal open={openBirth} date={birth} mode={'date'}
-                            title='Chọn ngày sinh nhật'
-                            confirmText='Chọn'
-                            cancelText='Hủy'
-                            locale='vi_VN'
-                            onConfirm={(birth) => {
-                                setOpenBirth(false)
-                                setBirth(birth)
-                            }}
-                            onCancel={() => {
-                                setOpenBirth(false)
-                            }}
-                        />
                     </View>
                     <View style={styles.items}>
                         <Text style={styles.placeHolders}>Giấy tờ tùy thân</Text>
@@ -159,11 +83,7 @@ export default function UserInfo({ navigation }) {
                     <View style={[styles.items, { borderBottomColor: '#fff' }]}>
                         <Text style={styles.placeHolders}>Email</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={setEmail}
-                                value={email}
-                            />
+                            <Text style={styles.input}>{userEmail}</Text>
                             <MaterialCommunityIcons name='pencil-box-outline' size={16} color="#699BF7" />
                         </View>
                     </View>

@@ -6,7 +6,7 @@ import { defaultStyles } from '../../../style/style'
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
 
-export default function PaymentSuccess({ navigation }) {
+export default function BookingSuccess({ navigation }) {
     return (
         <View style={defaultStyles.containers}>
             <View style={styles.header}>
@@ -29,7 +29,7 @@ export default function PaymentSuccess({ navigation }) {
                     <Text style={{ fontSize: 18, textAlign: 'center', fontWeight: '300', color: '#000' }}>
                         Vui lòng kiểm tra thông tin phòng đã đặt trong mục
                     </Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('YourBookingStack', { screen: 'YourBooking' })}>
                         <Text style={{ color: '#3C5A99', fontSize: 18 }}>"Đã Đặt"</Text>
                     </TouchableOpacity>
                 </View>

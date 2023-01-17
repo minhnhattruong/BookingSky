@@ -4,134 +4,124 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Image
+  Image,
+  ScrollView
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-
-const HOTEL = [
-  {
-    id: 1,
-    img: 'https://i.pinimg.com/originals/48/fe/a0/48fea08a252ca06dd4b86b2679203ee8.jpg',
-    name: 'GTC HOTEL I',
-    evaluate: '789',
-    address: '89, Nguyễn Phong Sắc, Cầu Giấy, Phú Quốc..',
-    price: '2.500.000đ'
-  },
-  {
-    id: 2,
-    img: 'https://i.pinimg.com/564x/2f/ad/a9/2fada9d2abe2719ea544c9c4015e4c32.jpg',
-    name: 'GTC HOTEL II',
-    evaluate: '678',
-    address: '87, Minh Khai, Phú Quốc..',
-    price: '3.000.000đ'
-  },
-  {
-    id: 3,
-    img: 'https://i.pinimg.com/564x/3e/ec/37/3eec376c0a87d6a426c3f3548190cc51.jpg',
-    name: 'GTC HOTEL III',
-    evaluate: '456',
-    address: '144, An Dương Vương, Cầu Giấy, Phú Quốc..',
-    price: '2.090.000đ'
-  },
-  {
-    id: 4,
-    img: 'https://i.pinimg.com/564x/f0/d7/07/f0d7073c0d8251cfc1e80c478e564b92.jpg',
-    name: 'GTC HOTEL IV',
-    evaluate: '345',
-    address: '53, ngõ Văn Chương, Khâm Thiên, Phú Quốc..',
-    price: '2.050.000đ'
-  },
-  {
-    id: 5,
-    img: 'https://i.pinimg.com/564x/86/4d/4c/864d4c063c6668461592723c9a19d19d.jpg',
-    name: 'GTC HOTEL V',
-    evaluate: '234',
-    address: '48A, Trần Hưng Đạo, Phú Quốc..',
-    price: '2.000.000đ'
-  },
-  {
-    id: 6,
-    img: 'https://i.pinimg.com/564x/f3/96/4b/f3964bd22e71e2197b9ce1d459e48a81.jpg',
-    name: 'GTC HOTEL VI',
-    evaluate: '123',
-    address: '33, ngõ 33/4 Lê Thanh Nghị, Phú Quốc..',
-    price: '2.000.000đ'
-  },
-
-]
-
-const Item = ({ img, name, evaluate, address, price, navigation }) => {
-
-  return (
-    <TouchableOpacity style={styles.item}
-      onPress={() => {
-        navigation.navigate('HomeStack', {
-          screen: 'HotelInfo',
-          params: {
-            name: name,
-            evaluate: evaluate,
-            address: address
-          },
-        });
-
-      }}
-    >
-
-
-      <Image style={styles.hotelImage} source={{ uri: img }} />
-
-      <View style={{ justifyContent: 'center', marginHorizontal: 15 }}>
-        <Text style={{ width: '100%', fontWeight: '600', fontSize: 14, color: '#000' }}>{name}</Text>
-        <View style={{ flexDirection: 'row', marginTop: 2, alignItems: 'center', marginBottom: 12 }}>
-          <AntDesign name='star' size={12} color={'#FFD233'} />
-          <AntDesign name='star' size={12} color={'#FFD233'} />
-          <AntDesign name='star' size={12} color={'#FFD233'} />
-          <AntDesign name='star' size={12} color={'#FFD233'} />
-          <AntDesign name='star' size={12} color={'#FFD233'} />
-          <Text style={{ fontSize: 11, marginLeft: 5 }}>({evaluate} đánh giá)</Text>
-        </View>
-        <Text style={{ width: 200, height: 30, fontSize: 11 }}>{address}</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end', marginTop: 7 }}>
-          <Text style={{ fontSize: 12, marginBottom: 0.5, marginRight: 5 }}>Từ </Text>
-          <Text style={{ color: '#000', fontSize: 17, fontWeight: '500' }}>{price}</Text>
-          <Text> /đêm</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  )
-};
-
-
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllFavorite, deleteFavorite } from '../../api/apiFavorite'
+import Animated from 'react-native-reanimated'
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@gorhom/bottom-sheet';
+import Header from '../../component/headers/Header';
+import { FormattedCurrency } from 'react-native-globalize';
 const Favourite = ({ navigation }) => {
+  const dispatch = useDispatch()
 
-  const renderItem = ({ item }) => (
-    <Item img={item.img} name={item.name} evaluate={item.evaluate} address={item.address} price={item.price} navigation={navigation} />
-  );
+  const userId = useSelector(store => store.auth.info.idUser);
+  const state = useSelector(store => store.booking.refreshBk);
+
+  const [data, setData] = useState([])
+  const [refresh, setRefresh] = useState(false)
+  const animatedValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    getAll(userId)
+  }, [refresh])
+
+
+
+
+  const getAll = (id) => {
+    getAllFavorite(id).then(rep => {
+      setData(rep.data)
+    }).catch(e => {
+      console.log(e)
+    })
+  }
+
+  const onDelete = (id) => {
+    deleteFavorite(userId, id).then(rep => {
+      setRefresh(!refresh)
+    }).catch(e => {
+      console.log(e)
+    })
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#EDF1F9' }}>
-      <View style={styles.header}>
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={{ color: '#fff', fontSize: 18, fontWeight: '500' }}>Ưa thích</Text>
-        </View>
-      </View>
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={HOTEL}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled={true}
-          style={{ marginTop: 10 }}
-        />
-      </View>
+      <Header title='Ưa thích' animatedValue={animatedValue} />
+      <View style={{ height: 60 }} />
+      <ScrollView
+        style={{ paddingHorizontal: 20, paddingTop: 20, marginBottom: 65 }}
+        onScroll={e => {
+          animatedValue.setValue(e.nativeEvent.contentOffset.y)
+        }}
+        scrollEventThrottle={16}
+      >
+        {
+          data.map((e, i) => {
+            const ratingStar = []
+            for (let i = 0; i < e.hotel.rating; i++) {
+              ratingStar.push(i)
+            }
+            return (
+              <View key={i} style={styles.item}>
+                <Image
+                  source={e.hotel.photos.length > 0 ?
+                    { uri: `http://localhost:8000/${e.hotel?.photos[0]}` }
+                    :
+                    require('../../assets/image/stock-hotel.png')
+                  }
+                  style={styles.itemImage}
+                />
+                <View style={styles.hotelInfo}>
+                  <Text style={styles.hotelName} numberOfLines={2} ellipsizeMode={'tail'}>{e.hotel.title}</Text>
+                  <View style={{ flexDirection: 'row' }}>
+                    {
+                      ratingStar.map((e, i) => (
+                        <AntDesign key={i} name='star' size={18} color={'#f29c00'} />
+                      ))
+                    }
+                  </View>
+                  <Text style={styles.hotelAddress} numberOfLines={2} ellipsizeMode={'tail'}>{e.hotel.address}</Text>
+                  {e.hotel.freeCancel &&
+                    <View style={styles.freeTaxi}>
+                      <View style={styles.dotTag} />
+                      <Text style={{ fontSize: 10, color: '#fff', fontWeight: '500' }}>Miễn phí huỷ</Text>
+                    </View>
+                  }
+                  <View style={styles.hotelPrice}>
+                    <Text style={{ fontSize: 12, marginBottom: 0.5, marginRight: 3 }}>Từ </Text>
+                    <FormattedCurrency style={{ color: '#000', fontSize: 16, fontWeight: '500' }} value={Number(e.hotel.cheapestPrice)} />
+                    <Text> /đêm</Text>
+                  </View>
+                  <View style={styles.location}>
+                    <Ionicons name='md-location-sharp' size={14} color={'#686868'} />
+                    <Text style={{ fontSize: 12, marginLeft: 5 }}>{e.hotel.city}</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.unlikedBtn}
+                  onPress={() => onDelete(e.hotel._id)}
+                >
+                  <AntDesign name='delete' size={16} color={'#fff'} />
+                </TouchableOpacity>
+              </View>
+            )
+          }
+          )
+        }
+      </ScrollView>
     </View>
   );
 };
 
 export default Favourite;
 
+const ITEM_HEIGHT = WINDOW_HEIGHT * 0.25
+const ITEM_WIDTH = WINDOW_WIDTH * 0.90
 const styles = StyleSheet.create({
   header: {
     paddingTop: 20,
@@ -149,25 +139,71 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   item: {
+    height: ITEM_HEIGHT,
+    width: ITEM_WIDTH,
+    overflow: 'hidden',
     backgroundColor: '#fff',
     marginBottom: 10,
-    marginHorizontal: 20,
     flexDirection: 'row',
     borderRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 1.00,
-
-    elevation: 2.5,
-    overflow: 'hidden'
-
   },
-  hotelImage: {
-    width: 130,
-    height: 130
+  itemImage: {
+    width: ITEM_WIDTH * 0.45,
+    height: ITEM_HEIGHT
+  },
+  hotelName: {
+    width: '65%',
+    fontWeight: '600',
+    fontSize: 14,
+    color: '#000'
+  },
+  hotelInfo: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    width: ITEM_WIDTH * 0.55,
+  },
+  hotelAddress: {
+    width: '70%',
+    height: 30,
+    fontSize: 11
+  },
+  freeTaxi: {
+    backgroundColor: '#ea4e14',
+    width: 80,
+    paddingVertical: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    flexDirection: 'row'
+  },
+  dotTag: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: '#fff',
+    marginRight: 3
+  },
+  hotelPrice: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    width: '70%'
+  },
+  location: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  unlikedBtn: {
+    width: 30,
+    height: 30,
+    backgroundColor: '#ff0000',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 20,
+    right: 20
   }
+
 });

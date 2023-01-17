@@ -1,68 +1,50 @@
 import { View, Text, StyleSheet, StatusBar, SafeAreaView } from 'react-native';
 import React from 'react';
+import { GlobalizeProvider } from 'react-native-globalize';
 //Redux
-import { createStore, combineReducers } from 'redux';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { configureStore } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadCldr } from 'react-native-globalize';
 import {
   persistStore,
   persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
 } from 'redux-persist';
-import Icon from 'react-native-vector-icons/MaterialIcons'
-
-// import HomeSlice from "./src/store/HomeSlice";
-import AuthSlice from './src/reducers/AuthSlice';
-
 import Navigation from './src/navigation';
+import rootReducer from './src/reducers/index';
 
-// import { store } from './src/store/store'
-
-export const allReducers = combineReducers({
-  auth: AuthSlice,
-});
+loadCldr(
+  require('react-native-globalize/locale-data/vi'),
+);
 
 const persistConfig = {
   key: 'root',
+  version: 1,
   storage: AsyncStorage,
 };
 
-const persistedReducer = persistReducer(persistConfig, allReducers);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      // serializableCheck: {
-      //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      // },
       serializableCheck: false,
     }),
 });
 
 export default function App() {
-
   let persistor = persistStore(store);
-  // In app.tsx
-
-
   return (
     <Provider store={store}>
-
       <PersistGate loading={null} persistor={persistor}>
-        <PaperProvider>
+        <GlobalizeProvider locale="vi" currency="VND">
           <SafeAreaView style={{ flex: 1 }}>
             <StatusBar />
             <Navigation />
           </SafeAreaView>
-        </PaperProvider>
+        </GlobalizeProvider>
       </PersistGate>
     </Provider>
   );
