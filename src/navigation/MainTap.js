@@ -54,6 +54,7 @@ function MainTap({ route }) {
         tabBarInactiveTintColor: 'gray',
         unmountOnBlur: true
       })}>
+
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}

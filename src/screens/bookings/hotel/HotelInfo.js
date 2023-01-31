@@ -7,7 +7,7 @@ import Animated from 'react-native-reanimated';
 import Header from '../../../component/headers/Header';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@gorhom/bottom-sheet';
 import { defaultStyles } from '../../../style/style'
-import { getHotelbyId, getRoombyIdHotel } from '../../../api/apiHotel';
+import { getHotelbyId } from '../../../api/apiHotel';
 import { addFavoriteHotel, deleteFavorite, getAllFavorite } from '../../../api/apiFavorite';
 import { useSelector, useDispatch } from 'react-redux'
 import { setState } from '../../../reducers/BookingSlice'

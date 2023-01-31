@@ -30,9 +30,6 @@ const Favourite = ({ navigation }) => {
     getAll(userId)
   }, [refresh])
 
-
-
-
   const getAll = (id) => {
     getAllFavorite(id).then(rep => {
       setData(rep.data)

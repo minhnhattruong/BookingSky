@@ -2,12 +2,14 @@ import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-nati
 import React, { useRef } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Animated from 'react-native-reanimated'
+import { useNavigation } from '@react-navigation/native';
 
 
 const WIDTH = Dimensions.get('window').width
 const AnimatedView = Animated.createAnimatedComponent(View);
 export default function Header(props) {
-    const navigation = props.navigation
+    // const navigation = props.navigation
+    const navigation = useNavigation();
     const animatedValue = props.animatedValue
     const fromScreen = props.fromScreen
     const title = props.title
@@ -57,7 +59,7 @@ export default function Header(props) {
                     <TouchableOpacity
                         style={{ position: 'absolute', left: 20, top: 15 }}
                         onPress={() => (
-                            fromScreen ? navigation.navigate('FavouriteStack', { screen: 'Favourite' })
+                            fromScreen ? navigation.popToTop()
                                 :
                                 navigation.goBack()
                         )
