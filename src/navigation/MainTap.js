@@ -2,14 +2,21 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeStack from '../navigation/HomeStack';
-import SignupStack from '../navigation/SignupStack';
 import FavouriteStack from '../navigation/FavouriteStack';
 import YourBookingStack from './YourBookingStack';
 import AccountStack from './AccountStack';
+import {
+  getFocusedRouteNameFromRoute,
+  getActionFromState,
+} from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
-function MainTap() {
+function MainTap({ route }) {
+  React.useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route);
+    console.log('RouteName', routeName)
+  })
   return (
     <Tab.Navigator
       initialRouteName="HomeStack"
@@ -29,8 +36,6 @@ function MainTap() {
             iconName = focused ? 'account' : 'account-outline';
             size = 28;
           }
-
-          // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
         tabBarLabelStyle: {

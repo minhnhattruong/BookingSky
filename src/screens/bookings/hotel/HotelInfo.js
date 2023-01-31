@@ -15,7 +15,7 @@ import { setState } from '../../../reducers/BookingSlice'
 export default function HotelInfo({ route, navigation }) {
     const dispatch = useDispatch()
     const userId = useSelector(store => store.auth.info.idUser)
-    const { hotelId } = route.params
+    const { hotelId, fromScreen } = route.params
     const [refresh, setRefresh] = useState(true)
     const [likechecked, setLikeChecked] = useState(false)
     const [hotelInfo, setHotelInfo] = useState([])
@@ -67,7 +67,7 @@ export default function HotelInfo({ route, navigation }) {
 
     return (
         <View style={defaultStyles.containers}>
-            <Header navigation={navigation} animatedValue={animatedValue} title={hotelInfo.title} />
+            <Header navigation={navigation} animatedValue={animatedValue} title={hotelInfo.title} fromScreen={fromScreen} />
             <ScrollView
                 onScroll={e => {
                     animatedValue.setValue(e.nativeEvent.contentOffset.y)

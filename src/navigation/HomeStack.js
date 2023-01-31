@@ -26,7 +26,6 @@ export default function HomeStack({ navigation, route }) {
 
   React.useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
-    console.log('RouteName', routeName)
     if (routeName === 'Home' || routeName === undefined) {
       navigation.setOptions({
         tabBarStyle: {
@@ -44,7 +43,7 @@ export default function HomeStack({ navigation, route }) {
   }, [navigation, route]);
 
   return (
-    <StackHome.Navigator initialRouteName="Home">
+    <StackHome.Navigator initialRouteName="Home" >
       <StackHome.Screen
         name="Home"
         component={Home}

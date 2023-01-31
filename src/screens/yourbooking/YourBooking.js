@@ -11,6 +11,7 @@ const YourBooking = ({ navigation }) => {
 
     const [data, setData] = useState([])
     const [refreshing, setRefreshing] = useState(false);
+    const [chooseBooking, setChooseBooking] = useState();
 
     const bottomSheetRef = useRef(null);
     const handlePresentModalPress = useCallback(() => {
@@ -37,7 +38,11 @@ const YourBooking = ({ navigation }) => {
         })
     }
 
-    console.log(data);
+    const onPay = (e) => {
+        handlePresentModalPress()
+        setChooseBooking(e)
+    }
+
     return (
         <View style={styles.container}>
             <Header title="Đã đặt" />
@@ -53,7 +58,7 @@ const YourBooking = ({ navigation }) => {
                         <View key={i} style={styles.items}>
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1, height: 120 }}>
-                                    <Image style={{ height: '100%', width: '100%' }} source={{ uri: 'https://img1.10bestmedia.com/Images/Photos/378649/Park-Hyatt-New-York-Manhattan-Sky-Suite-Master-Bedroom-low-res_54_990x660.jpg' }} />
+                                    <Image style={{ height: '100%', width: '100%' }} source={e.photos.length > 0 ? { uri: `http://localhost:8000/${e.photos[0]}` } : { uri: 'https://img1.10bestmedia.com/Images/Photos/378649/Park-Hyatt-New-York-Manhattan-Sky-Suite-Master-Bedroom-low-res_54_990x660.jpg' }} />
                                 </View>
                                 <View style={{ flex: 2, padding: 10 }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -84,6 +89,10 @@ const YourBooking = ({ navigation }) => {
                                             <Text style={{ fontSize: 12, width: 80 }}>Trả phòng:</Text>
                                             <Text style={{ fontSize: 12 }}>{e.reserveDates[1]}</Text>
                                         </View>
+                                        <View style={{ marginTop: 5, flexDirection: 'row' }}>
+                                            <Text style={{ fontSize: 12, width: 80 }}>ID Đặt phòng:</Text>
+                                            <Text style={{ fontSize: 12, textTransform: 'uppercase', fontWeight: '500', color: '#000' }}>{e._id.slice(0, 9)}</Text>
+                                        </View>
                                     </View>
                                 </View>
                             </View>
@@ -99,20 +108,25 @@ const YourBooking = ({ navigation }) => {
                                     <Text>Giá</Text>
                                     <FormattedCurrency style={styles.price} value={Number(e.price)} />
                                 </View>
-                                <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <TouchableOpacity
                                         style={styles.cancelButton}
                                         onPress={() => onCancel(e._id)}
                                     >
                                         <Text style={{ fontWeight: '500', color: '#fff', fontSize: 12 }}>Hủy phòng</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.payButton}
-                                        onPress={() => handlePresentModalPress()}
-                                    >
-                                        <Text style={{ fontWeight: '500', color: '#fff', fontSize: 12 }}>Thanh toán</Text>
-                                    </TouchableOpacity>
-                                    <PaymentModal bottomSheetRef={bottomSheetRef} />
+                                    {e.isPaid === false ? (
+                                        <TouchableOpacity
+                                            style={styles.payButton}
+                                            onPress={() => onPay(e._id.slice(0, 9))}
+                                        >
+                                            <Text style={{ fontWeight: '500', color: '#fff', fontSize: 12 }}>Thanh toán</Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <Text style={{ fontWeight: '500', color: '#319c57', fontSize: 12, marginLeft: 10 }}>Đã thanh toán</Text>
+                                    )
+                                    }
+                                    <PaymentModal bottomSheetRef={bottomSheetRef} data={chooseBooking} />
                                 </View>
                             </View>
                         </View>

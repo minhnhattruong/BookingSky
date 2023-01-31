@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import Animated from 'react-native-reanimated';
+import { useSelector, useDispatch } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
@@ -13,6 +13,7 @@ import { FormattedCurrency } from 'react-native-globalize';
 
 
 export default function RoomInfo({ route, navigation }) {
+    const userEmail = useSelector(store => store.auth.info.email);
     const { hotelId, hotelInfo } = route.params
     const [checkin, setCheckin] = useState(new Date())
     const [checkout, setCheckout] = useState(new Date())
@@ -20,10 +21,10 @@ export default function RoomInfo({ route, navigation }) {
     const [openCheckOut, setOpenCheckOut] = useState(false)
     const [room, setRoom] = useState([])
     const [choosen, setChoosen] = useState([])
+    const [choosenRoomKind, setChoosenRoomKind] = useState({})
     const [openShowRoom, setOpenShowRoom] = useState([])
     const sDate = moment(checkin).format('YYYY-MM-DD')
     const eDate = moment(checkout).format('YYYY-MM-DD')
-    const [dataBooking, setDataBooking] = useState([])
 
     let difference = checkout.getTime() - checkin.getTime()
     let totalDays = Math.ceil(difference / (1000 * 3600 * 24));
@@ -63,13 +64,16 @@ export default function RoomInfo({ route, navigation }) {
         }
     }
 
+    console.log('hotelInfo', hotelInfo);
+
     const onBooking = () => {
         choosen.map((e, i) => {
             bookingHotel(e.id, {
                 hotelId: hotelInfo._id,
                 title: hotelInfo.title,
                 roomNum: e.number,
-                // photos: e.photos[0],
+                photos: hotelInfo.photos[0],
+                email: userEmail,
                 address: hotelInfo.address,
                 dates: [sDate, eDate],
                 totalPrice: totalDays * hotelInfo.cheapestPrice
@@ -80,13 +84,13 @@ export default function RoomInfo({ route, navigation }) {
 
     const bookingHotel = (id, body) => {
         bookingRoom(id, body).then(rep => {
-            setDataBooking([...dataBooking, rep.data])
+            console.log(rep);
         }).catch(e => {
             console.log(e)
         })
     }
 
-    console.log(choosen);
+    console.log(userEmail);
 
     return (
         <View style={styles.container}>
@@ -181,7 +185,8 @@ export default function RoomInfo({ route, navigation }) {
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10 }}>
                                         <TouchableOpacity
                                             style={styles.showRoomBtn}
-                                            onPress={() => onShowRoomList(e._id)}>
+                                            onPress={() => { onShowRoomList(e._id) }
+                                            }>
                                             <Text style={{ fontWeight: '500', color: '#699BF7', marginRight: 5 }}>Xem phòng trống</Text>
                                             <AntDesign name={openShowRoom == e._id ? 'up' : 'down'} size={12} color={'#699BF7'} />
                                         </TouchableOpacity>

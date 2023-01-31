@@ -9,6 +9,7 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 export default function Header(props) {
     const navigation = props.navigation
     const animatedValue = props.animatedValue
+    const fromScreen = props.fromScreen
     const title = props.title
 
     const inputAnimation = {
@@ -27,6 +28,8 @@ export default function Header(props) {
         }),
 
     };
+
+    console.log(fromScreen);
 
 
 
@@ -53,7 +56,13 @@ export default function Header(props) {
                 {navigation &&
                     <TouchableOpacity
                         style={{ position: 'absolute', left: 20, top: 15 }}
-                        onPress={() => navigation.goBack()}>
+                        onPress={() => (
+                            fromScreen ? navigation.navigate('FavouriteStack', { screen: 'Favourite' })
+                                :
+                                navigation.goBack()
+                        )
+                        }
+                    >
                         <AntDesign name='left' size={26} color={'#3C5A99'} />
                     </TouchableOpacity>
                 }
@@ -95,7 +104,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 1.00,
-
         elevation: 4,
     },
 })

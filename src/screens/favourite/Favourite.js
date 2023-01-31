@@ -66,8 +66,19 @@ const Favourite = ({ navigation }) => {
             for (let i = 0; i < e.hotel.rating; i++) {
               ratingStar.push(i)
             }
+            console.log(e.hotel._id);
             return (
-              <View key={i} style={styles.item}>
+              <TouchableOpacity
+                key={i}
+                style={styles.item}
+                onPress={() => navigation.navigate('HomeStack',
+                  {
+                    screen: 'HotelInfo',
+                    params: {
+                      hotelId: e.hotel._id,
+                      fromScreen: 'Favourite',
+                    }
+                  })}>
                 <Image
                   source={e.hotel.photos.length > 0 ?
                     { uri: `http://localhost:8000/${e.hotel?.photos[0]}` }
@@ -108,7 +119,7 @@ const Favourite = ({ navigation }) => {
                 >
                   <AntDesign name='delete' size={16} color={'#fff'} />
                 </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             )
           }
           )

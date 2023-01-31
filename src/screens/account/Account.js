@@ -1,9 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
-import Entypo from 'react-native-vector-icons/Entypo'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { clearState, insFCMYtokenAPI } from '../../reducers/AuthSlice';
+import { clearState } from '../../reducers/AuthSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@gorhom/bottom-sheet'
 

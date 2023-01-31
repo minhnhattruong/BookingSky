@@ -9,7 +9,7 @@ const getAllBooking = () => {
 }
 
 const cancelBooking = (id) => {
-    return instance.put(`/api/v1/bookings/${id}`)
+    return instance.delete(`/api/v1/bookings/${id}`)
 }
 
 export { bookingRoom, getAllBooking, cancelBooking }
