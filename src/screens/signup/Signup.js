@@ -104,7 +104,7 @@ export default function Register({ navigation }) {
                             onChangeText={setNation}
                             placeholder="Quốc tịch"
                         />
-                        <Text style={styles.inputTitle}>Nhập lại mật khẩu <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
+                        <Text style={styles.inputTitle}>Mật khẩu <Text style={{ color: '#ff0000' }}>(*)</Text></Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={setPassword}

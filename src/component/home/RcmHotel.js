@@ -13,6 +13,7 @@ import { FormattedCurrency } from 'react-native-globalize';
 
 export default function RcmHotel(props) {
     const { navigation, data } = props
+    const dataFlatlist = data.slice(0, 9)
     return (
         <View style={styles.hotels}>
             <View
@@ -38,7 +39,11 @@ export default function RcmHotel(props) {
                     style={{
                         flexDirection: 'row',
                         alignItems: 'center',
-                    }}>
+                    }}
+                    onPress={() => navigation.navigate('RcmHotelList', {
+                        data: data
+                    })}
+                >
                     <Text style={{ color: '#699BF7', marginRight: 3, fontSize: 14 }}>
                         Xem thêm
                     </Text>
@@ -46,7 +51,7 @@ export default function RcmHotel(props) {
                 </TouchableOpacity>
             </View>
             <FlatList
-                data={data}
+                data={dataFlatlist}
                 renderItem={
                     ({ item }) => (
                         <TouchableOpacity

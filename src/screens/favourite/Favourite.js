@@ -71,6 +71,7 @@ const Favourite = ({ navigation }) => {
                 onPress={() => navigation.navigate('HomeStack',
                   {
                     screen: 'HotelInfo',
+                    initial: false,
                     params: {
                       hotelId: e.hotel._id,
                       fromScreen: 'Favourite',

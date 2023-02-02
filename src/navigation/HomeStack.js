@@ -7,14 +7,9 @@ import HotelList from '../screens/bookings/hotel/HotelList';
 import HotelInfo from '../screens/bookings/hotel/HotelInfo';
 import RoomInfo from '../screens/bookings/hotel/RoomInfo';
 import BookingSuccess from '../screens/bookings/hotel/BookingSuccess';
-import ScreenMap from '../screens/maps/ScreenMap';
-import NotificationScreen from '../screens/Notification';
-import SettingScreen from '../screens/setting/Setting';
-import SecurityScreen from '../screens/setting/Security';
-import ChangePasswordScreen from '../screens/setting/ChangePassword';
-import ChangeLanguageScreen from '../screens/setting/ChangeLanguage';
-import ChangeCurrencyScreen from '../screens/setting/ChangeCurrency';
-import SettingNotificationScreen from '../screens/setting/SettingNotification';
+import PlaceList from '../screens/place/PlaceList';
+import PlaceInfo from '../screens/place/PlaceInfo';
+import RcmHotelList from '../screens/rcmHotels/RcmHotelList';
 
 const StackHome = createNativeStackNavigator();
 import {
@@ -75,44 +70,18 @@ export default function HomeStack({ navigation, route }) {
         options={{ headerShown: false }}
       />
       <StackHome.Screen
-        name="Notification"
-        component={NotificationScreen}
+        name="PlaceList"
+        component={PlaceList}
         options={{ headerShown: false }}
       />
       <StackHome.Screen
-        name="Setting"
-        component={SettingScreen}
+        name="PlaceInfo"
+        component={PlaceInfo}
         options={{ headerShown: false }}
       />
       <StackHome.Screen
-        name="Security"
-        component={SecurityScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="ChangePassword"
-        component={ChangePasswordScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="ChangeLanguage"
-        component={ChangeLanguageScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="ChangeCurrency"
-        component={ChangeCurrencyScreen}
-        options={{ headerShown: false }}
-      />
-      <StackHome.Screen
-        name="SettingNotification"
-        component={SettingNotificationScreen}
-        options={{ headerShown: false }}
-      />
-
-      <StackHome.Screen
-        name="ScreenMap"
-        component={ScreenMap}
+        name="RcmHotelList"
+        component={RcmHotelList}
         options={{ headerShown: false }}
       />
     </StackHome.Navigator>

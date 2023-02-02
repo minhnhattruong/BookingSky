@@ -71,24 +71,6 @@ export default function HeaderMenu(props) {
         ],
     }
 
-    const coinAnimation = {
-        transform: [
-            {
-                translateX: animatedValue.interpolate({
-                    inputRange: [0, 15],
-                    outputRange: [0, 100],
-                    extrapolate: 'clamp',
-                })
-            }
-        ],
-        opacity: animatedValue.interpolate({
-            inputRange: [0, 25],
-            outputRange: [1, 0],
-            extrapolate: 'clamp',
-        }),
-
-    }
-
     const depositLogo = {
         transform: [
             {
@@ -347,7 +329,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     smallButton: {
-        zIndex: -1,
+        zIndex: 5,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -356,7 +338,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 60,
         backgroundColor: '#fff',
-        zIndex: 3,
+        zIndex: 100,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -368,7 +350,7 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     smallButtonItem: {
-        width: '50%',
+        width: '100%',
         alignItems: 'center',
 
     },

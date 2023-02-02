@@ -17,30 +17,10 @@ import { FormattedCurrency } from 'react-native-globalize';
 import Animated from 'react-native-reanimated'
 import { defaultStyles } from '../style/style'
 import { getRCMHotel } from '../api/apiHotel';
+import { getAllPlaces } from '../api/apiPost';
 import RcmHotel from '../component/home/RcmHotel';
+import PlaceList from '../component/home/PlaceList';
 
-const TOURIST = [
-  {
-    id: 1,
-    img: 'https://pix10.agoda.net/geo/country/106/3_106_thailand_02.jpg?s=1920x',
-    name: 'BANGKOK',
-  },
-  {
-    id: 2,
-    img: 'https://www.planetware.com/photos-large/F/france-paris-eiffel-tower.jpg',
-    name: 'PARIS',
-  },
-  {
-    id: 3,
-    img: 'https://images.moneycontrol.com/static-mcnews/2021/07/Maldives-mike-swigunski-k9Zeq6EH_bk-unsplash.jpg',
-    name: 'MALDIVES',
-  },
-  {
-    id: 4,
-    img: 'https://pix10.agoda.net/geo/country/106/3_106_thailand_02.jpg?s=1920x',
-    name: 'BANGKOK',
-  },
-];
 
 const ENDOW = [
   {
@@ -57,31 +37,6 @@ const ENDOW = [
   },
 ];
 
-const Item = ({ img, name }) => (
-  <TouchableOpacity style={styles.touristItem}>
-    <Image style={styles.touristImage} source={{ uri: img }} />
-    <View
-      style={{ width: 180, position: 'absolute', top: 45, alignItems: 'center' }}>
-      <Text
-        style={{
-          color: 'white',
-          fontWeight: '600',
-          fontSize: 22,
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.23,
-          shadowRadius: 2.62,
-
-          elevation: 4,
-        }}>
-        {name}
-      </Text>
-    </View>
-  </TouchableOpacity>
-);
 
 const Item2 = ({ img }) => (
   <TouchableOpacity style={styles.endowItem}>
@@ -91,23 +46,29 @@ const Item2 = ({ img }) => (
 
 export default function Home({ navigation }) {
 
-  const renderItem = ({ item }) => <Item img={item.img} name={item.name} />;
-
-
-
   const renderItem2 = ({ item }) => <Item2 img={item.img} />;
 
   const animatedValue = useRef(new Animated.Value(0)).current;
 
-  const [rcmHotel, setRCMHotel] = useState([])
+  const [rcmHotel, setRCMHotel] = useState([]);
+  const [places, setPlaces] = useState([]);
 
   useEffect(() => {
-    getSearch()
+    getRCMHotels()
+    getAllPlace()
   }, [])
 
-  const getSearch = () => {
+  const getRCMHotels = () => {
     getRCMHotel().then(rep => {
       setRCMHotel(rep.data)
+    }).catch(e => {
+      console.log(e)
+    })
+  }
+
+  const getAllPlace = () => {
+    getAllPlaces().then(rep => {
+      setPlaces(rep.data)
     }).catch(e => {
       console.log(e)
     })
@@ -129,41 +90,7 @@ export default function Home({ navigation }) {
       >
 
         <View style={styles.paddingForHeader} />
-
-        <View style={styles.tourist}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              width: '100%',
-              paddingHorizontal: 10
-            }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={defaultStyles.titles}>
-                ĐỊA ĐIỂM NỔI BẬT
-              </Text>
-              <AntDesign name="star" size={20} color={'#FFD233'} style={{ marginLeft: 5 }} />
-            </View>
-            <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Text style={{ color: '#699BF7', marginRight: 3, fontSize: 14 }}>
-                Xem thêm
-              </Text>
-              <AntDesign name="right" size={13} color={'#699BF7'} />
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            data={TOURIST}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={true}
-          />
-        </View>
+        <PlaceList data={places} navigation={navigation} />
         <RcmHotel data={rcmHotel} navigation={navigation} />
         <View style={styles.endow}>
           <View
@@ -211,22 +138,6 @@ const styles = StyleSheet.create({
   },
   paddingForHeader: {
     height: 95
-  },
-  tourist: {
-    paddingTop: 60,
-    backgroundColor: '#fff',
-    paddingBottom: 5,
-  },
-  touristItem: {
-    marginVertical: 8,
-    marginHorizontal: 1.8,
-    width: 180,
-    height: 120,
-  },
-  touristImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
   },
   endow: {
     backgroundColor: '#fff',

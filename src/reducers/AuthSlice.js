@@ -16,7 +16,7 @@ export const signInApi = createAsyncThunk(
     try {
       return await login(params)
     } catch (err) {
-      return rejectWithValue(err)
+      console.log(err);
     }
   },
 );
@@ -43,14 +43,14 @@ export const authSlice = createSlice({
     })
     builder.addCase(signInApi.fulfilled, (state, action) => {
       state.loading = false;
-      state.token = action.payload.data.access_token;
+      state.token = action.payload.data?.access_token;
       state.info = {
-        name: action.payload.data.user.name,
-        email: action.payload.data.user.email,
-        phone: action.payload.data.user.phone,
-        nation: action.payload.data.user.nation,
-        identifyCard: action.payload.data.user.identifyCard,
-        idUser: action.payload.data.user._id,
+        name: action.payload.data?.user.name,
+        email: action.payload.data?.user.email,
+        phone: action.payload.data?.user.phone,
+        nation: action.payload.data?.user.nation,
+        identifyCard: action.payload.data?.user.identifyCard,
+        idUser: action.payload.data?.user._id,
       };
     })
     builder.addCase(signInApi.rejected, (state, action) => {
