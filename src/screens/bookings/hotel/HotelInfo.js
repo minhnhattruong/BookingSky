@@ -88,7 +88,7 @@ export default function HotelInfo({ route, navigation }) {
                                     hotelInfo.photos.map((e, i) => {
                                         return (
                                             <View key={i} style={styles.slideContainer}>
-                                                <Image source={{ uri: `http://localhost:8000/${e}` }} style={styles.hotelImage} />
+                                                <Image source={{ uri: `http://103.163.216.51:8000/${e}` }} style={styles.hotelImage} />
                                             </View>
                                         )
                                     })

@@ -58,7 +58,7 @@ export default function HotelList({ route, navigation }) {
                                 }}>
 
 
-                                    <Image style={styles.hotelImage} source={e.photos.length > 0 ? { uri: `http://localhost:8000/${e.photos[0]}` }
+                                    <Image style={styles.hotelImage} source={e.photos.length > 0 ? { uri: `http://103.163.216.51:8000/${e.photos[0]}` }
                                         : { uri: 'https://i.pinimg.com/564x/f0/d7/07/f0d7073c0d8251cfc1e80c478e564b92.jpg' }} />
 
                                     <View style={styles.hotelInfo}>

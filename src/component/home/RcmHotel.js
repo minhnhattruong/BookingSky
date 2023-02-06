@@ -63,7 +63,7 @@ export default function RcmHotel(props) {
                             <Image style={styles.hotelImage}
                                 source={
                                     item.photos.length > 0 ?
-                                        { uri: `http://localhost:8000/${item.photos[0]}` }
+                                        { uri: `http://103.163.216.51:8000/${item.photos[0]}` }
                                         : require('../../assets/image/stock-hotel.png')
                                 }
                             />

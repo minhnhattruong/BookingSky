@@ -4,4 +4,8 @@ const changePassword = (id, body) => {
     return instance.put(`/api/v1/user/${id}`, body)
 };
 
-export { changePassword }
+const updateUser = (id, body) => {
+    return instance.put(`api/v1/user/update/${id}`, body)
+}
+
+export { changePassword, updateUser }

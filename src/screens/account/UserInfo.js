@@ -2,12 +2,15 @@ import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, TextInput,
 import React, { useState, useCallback, useMemo, useRef } from 'react'
 import Header from '../../component/headers/Header'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
+import { updateUser } from '../../api/apiUser';
 
 const HEIGHT = Dimensions.get('window').height
 
 export default function UserInfo({ navigation }) {
+
+    const id = useSelector(store => store.auth.info.idUser);
     const userName = useSelector(store => store.auth.info.name);
     const userEmail = useSelector(store => store.auth.info.email);
     const userPhone = useSelector(store => store.auth.info.phone);
@@ -17,6 +20,21 @@ export default function UserInfo({ navigation }) {
     const [nation, setNation] = useState(userNation)
     const [identifyCard, setIdentifyCard] = useState(userIdentifyCard)
     const [phone, setPhone] = useState(userPhone)
+    const [err, setErr] = useState(false)
+
+    const onChange = () => {
+        const body = {
+            nation: nation,
+            identifyCard: identifyCard,
+            phone: phone
+        }
+        updateUser(id, body).then(rep => {
+            navigation.goBack()
+        }).catch(e => {
+            console.log(e)
+            setErr(true)
+        })
+    }
 
     return (
         <View style={styles.container}>
@@ -88,12 +106,17 @@ export default function UserInfo({ navigation }) {
                         </View>
                     </View>
                 </View>
+                {err && <Text style={{ textAlign: 'center', marginTop: 10, color: '#ff0000' }}>Xảy ra lỗi trong quá trình cập nhật thông tin !</Text>}
+
+                <Text style={{ marginHorizontal: 10, marginTop: 20 }}>Sau khi cập nhật thông tin thành công, bạn sẽ được tự động đăng xuất ra khỏi ứng dụng.</Text>
+            </ScrollView>
+            <View style={{ position: 'absolute', width: '100%', bottom: 20 }}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.goBack()}>
+                    onPress={() => onChange()}>
                     <Text style={{ fontSize: 16, color: '#fff', fontWeight: '500' }}>Xong</Text>
                 </TouchableOpacity>
-            </ScrollView>
+            </View>
         </View >
     )
 }
@@ -161,7 +184,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         height: WINDOW_HEIGHT * 0.065,
-        marginTop: 30,
+        marginTop: 20,
         marginBottom: 40,
         borderRadius: 15
     },

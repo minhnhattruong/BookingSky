@@ -58,7 +58,7 @@ const YourBooking = ({ navigation }) => {
                         <View key={i} style={styles.items}>
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1, height: 120 }}>
-                                    <Image style={{ height: '100%', width: '100%' }} source={e.photos.length > 0 ? { uri: `http://localhost:8000/${e.photos[0]}` } : { uri: 'https://img1.10bestmedia.com/Images/Photos/378649/Park-Hyatt-New-York-Manhattan-Sky-Suite-Master-Bedroom-low-res_54_990x660.jpg' }} />
+                                    <Image style={{ height: '100%', width: '100%' }} source={e.photos.length > 0 ? { uri: `http://103.163.216.51:8000/${e.photos[0]}` } : { uri: 'https://img1.10bestmedia.com/Images/Photos/378649/Park-Hyatt-New-York-Manhattan-Sky-Suite-Master-Bedroom-low-res_54_990x660.jpg' }} />
                                 </View>
                                 <View style={{ flex: 2, padding: 10 }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>

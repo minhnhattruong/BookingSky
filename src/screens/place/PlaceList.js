@@ -30,7 +30,7 @@ export default function PlaceList({ navigation, route }) {
                             style={styles.item}
                             onPress={() => getPlace(e)}>
                             <Image
-                                source={{ uri: `http://localhost:8000/${e.photos[0]}` }}
+                                source={{ uri: `http://103.163.216.51:8000/${e.photos[0]}` }}
                                 style={styles.itemImage}
                             />
                             <View style={styles.info}>

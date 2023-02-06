@@ -51,6 +51,7 @@ export const authSlice = createSlice({
         nation: action.payload.data?.user.nation,
         identifyCard: action.payload.data?.user.identifyCard,
         idUser: action.payload.data?.user._id,
+        role: action.payload.data?.user.isAdmin,
       };
     })
     builder.addCase(signInApi.rejected, (state, action) => {

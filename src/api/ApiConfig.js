@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { store } from '../../App';
-// import Config from "react-native-config";
+import Config from 'react-native-config';
 let instance = axios.create({
-  baseURL: 'http://localhost:8000',
+  // baseURL: 'http://103.163.216.51:8000',
+  baseURL: 'http://103.163.216.51:8000',
+  // baseURL: Config.REACT_APP_API_KEY,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',

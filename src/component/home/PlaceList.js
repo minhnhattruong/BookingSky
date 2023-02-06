@@ -14,7 +14,7 @@ export default function PlaceList(props) {
 
     const renderItem = ({ item }) => (
         <TouchableOpacity style={styles.touristItem} onPress={() => getPlace(item)}>
-            <Image style={styles.touristImage} source={{ uri: `http://localhost:8000/${item.photos[0]}` }} />
+            <Image style={styles.touristImage} source={{ uri: `http://103.163.216.51:8000/${item.photos[0]}` }} />
             <View
                 style={{ width: 180, position: 'absolute', top: 45, alignItems: 'center' }}>
                 <Text

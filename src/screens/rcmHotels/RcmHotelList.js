@@ -23,7 +23,7 @@ export default function RcmHotelList({ navigation, route }) {
     console.log(data);
 
     const getPlace = (e) => {
-        navigation.navigate('PlaceInfo', { data: e })
+        navigation.navigate('HotelInfo', { hotelId: e._id })
     }
     return (
         <View style={defaultStyles.containers}>
@@ -48,7 +48,7 @@ export default function RcmHotelList({ navigation, route }) {
                                 style={styles.item}
                                 onPress={() => getPlace(e)}>
                                 <Image
-                                    source={{ uri: `http://localhost:8000/${e.photos[0]}` }}
+                                    source={{ uri: `http://103.163.216.51:8000/${e.photos[0]}` }}
                                     style={styles.itemImage}
                                 />
                                 <View style={styles.hotelInfo}>

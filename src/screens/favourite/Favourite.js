@@ -79,7 +79,7 @@ const Favourite = ({ navigation }) => {
                   })}>
                 <Image
                   source={e.hotel.photos.length > 0 ?
-                    { uri: `http://localhost:8000/${e.hotel?.photos[0]}` }
+                    { uri: `http://103.163.216.51:8000/${e.hotel?.photos[0]}` }
                     :
                     require('../../assets/image/stock-hotel.png')
                   }
